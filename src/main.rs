@@ -1,20 +1,33 @@
 use std::io;
-use std::num::ParseIntError;
+use std::cmp::Ordering;
+use colored::*;
+use rand::Rng;
+
+
 
 fn main() {
-    println!("Guess the number: ");
 
-    let mut read_guess = String::new();
+    let secret_number  = rand::thread_rng().gen_range(1..10);
 
-    io::stdin().read_line(&mut read_guess).expect("Error reading from the command line.");
+    loop {
+        println!();
+        println!("Guess the number: ");
+        let mut read_guess = String::new();
 
-    let guess: u32 = match read_guess.trim().parse::<u32>() {
+        io::stdin().read_line(&mut read_guess).expect("Error reading from the command line.");
 
-        Ok(num) => num,
-        Err(_) => 0,
-    
-    };
+        let guess = match read_guess.trim().parse::<u32>() {
 
-    println!("You entered: {}.", guess);
+            Ok(num) => num,
+            Err(_) => continue,
+        };
 
+        match guess.cmp(&secret_number) {
+            Ordering::Less => {println!("{}", "Too small!".red())},
+            Ordering::Greater => {println!("{}", "Too big!".red())}Ordering::Equal => {
+                println!("{}", "You win!".green());
+                break;
+            }       
+        }
+    }
 }
